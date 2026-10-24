@@ -5,5 +5,12 @@ django-cors-headers==4.9.0
 pillow==13.0.0
 
 # YOLO推理
+# torch / torchvision 必须是 CUDA 构建(本机 RTX 4060, 驱动 561.19 → 上限 cu126)。
+# 原因: ultralytics 只声明"需要 torch", 不区分 CPU/CUDA 构建 —— 不显式钉住的话,
+#       重装依赖会把 +cpu 版装回来, GPU 会静默失效(不报错, 只是慢十倍)。
+--extra-index-url https://download.pytorch.org/whl/cu126
+torch==2.14.1+cu126
+torchvision==0.29.1+cu126
+
 ultralytics==8.4.183
 opencv-python==5.0.0.93
