@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑缺陷记录</title>
+</head>
+<body>
+    <h2>编辑缺陷记录</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">保存修改</button>
+    </form>
+    <a href="{% url 'defect_list' %}">返回列表</a>
+</body>
+</html>

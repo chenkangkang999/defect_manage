@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>缺陷详情</title>
+</head>
+<body>
+    <h2>缺陷详情</h2>
+    <p>缺陷类型：{{ record.defect_type.type_name }}</p>
+    <p>检测人员：{{ record.detect_person }}</p>
+    <p>设备编号：{{ record.device_id }}</p>
+    <p>置信度：{{ record.confidence }}</p>
+    <p>原图：<br><img src="{{ record.original_img.url }}" width="400"></p>
+    {% if record.defect_img %}
+    <p>标注缺陷图：<br><img src="{{ record.defect_img.url }}" width="400"></p>
+    {% endif %}
+    <p>备注：{{ record.remark }}</p>
+    <p>检测时间：{{ record.detect_time }}</p>
+    <a href="{% url 'defect_edit' record.id %}">编辑</a>
+    <a href="{% url 'defect_list' %}">返回列表</a>
+</body>
+</html>
