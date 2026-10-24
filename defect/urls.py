@@ -1,5 +1,5 @@
 from django.urls import path, include
-from . import views, api_views, dashboard_views
+from . import views, api_views, dashboard_views, compare_views, sse_views
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -24,6 +24,10 @@ urlpatterns = [
     path('review/<int:defect_id>/reject/', dashboard_views.review_action, {"action": "reject"}, name="review_reject"),
     path('heatmap/', dashboard_views.heatmap, name="heatmap"),
     path('events/', dashboard_views.event_list, name="event_list"),
+    path('compare/<int:defect_id>/', compare_views.compare_view, name="defect_compare"),
+
+    # SSE实时进度
+    path('api/v1/jobs/<str:job_id>/stream/', sse_views.job_progress_sse),
 
     # REST API
     path('api/v1/', include(router.urls)),

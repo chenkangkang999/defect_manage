@@ -5,7 +5,7 @@
     <title>缺陷详情</title>
 </head>
 <body>
-    <h2>缺陷详情</h2>
+    <h2>缺陷详情 #{{ record.id }}</h2>
     <p>缺陷类型：{{ record.defect_type.type_name }}</p>
     <p>检测人员：{{ record.detect_person }}</p>
     <p>设备编号：{{ record.device_id }}</p>
@@ -21,11 +21,35 @@
     <hr>
     <h3>数据血缘溯源</h3>
     <p>模型版本：{{ record.model_version }}</p>
-    <p>推理运行ID：{{ record.inference_run_id }}</p>
+    <p>推理运行ID：{{ record.infer_run_id }}</p>
     <p>数据指纹：<code>{{ record.data_fingerprint }}</code></p>
-    <p>复核状态：{% if record.is_reviewed %}已复核{% else %}未复核{% endif %}</p>
+    <p>划分契约：{{ record.manifest_ref|default:"-" }}</p>
     {% endif %}
 
+    <hr>
+    <h3>复核工作流</h3>
+    <p>状态：{{ record.get_review_status_display }}</p>
+    {% if record.reviewed_by %}
+    <p>复核人：{{ record.reviewed_by }} | 时间：{{ record.reviewed_at }}</p>
+    {% endif %}
+    {% if record.reject_reason %}
+    <p>驳回原因：{{ record.reject_reason }}</p>
+    {% endif %}
+
+    {% if record.review_status == "pending" %}
+    <form method="post" action="{% url 'review_reject' record.id %}" id="reject">
+        {% csrf_token %}
+        <p>
+            驳回原因：
+            <input type="text" name="reject_reason" size="50" placeholder="如：误检/非缺陷/置信度过低">
+            <button type="submit" style="color:red">确认驳回</button>
+        </p>
+    </form>
+    <p><a href="{% url 'review_confirm' record.id %}" style="color:green">✓ 确认无误</a></p>
+    {% endif %}
+
+    <hr>
+    <a href="{% url 'defect_compare' record.id %}">检测对比视图</a>
     <a href="{% url 'defect_edit' record.id %}">编辑</a>
     <a href="{% url 'defect_list' %}">返回列表</a>
 </body>

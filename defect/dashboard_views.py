@@ -82,6 +82,7 @@ def review_action(request, defect_id, action):
         record.review_status = "confirmed"
     elif action == "reject":
         record.review_status = "rejected"
+        record.reject_reason = request.POST.get("reject_reason", "")
     record.reviewed_by = request.user.username if request.user.is_authenticated else "admin"
     record.reviewed_at = timezone.now()
     record.save()
@@ -90,17 +91,22 @@ def review_action(request, defect_id, action):
 
 def heatmap(request):
     """缺陷空间热力图：历史所有bbox中心叠加。"""
-    # 从engine_raw里提取bbox中心
     points = []
     for r in DefectRecord.objects.all():
         if r.engine_raw and "boxes" in r.engine_raw:
             for box in r.engine_raw["boxes"]:
-                cx = box.get("cx", 320)
-                cy = box.get("cy", 240)
-                points.append([cx, cy])
+                cx = box.get("cx", box.get("x1", 320) + box.get("w", 0) / 2)
+                cy = box.get("cy", box.get("y1", 240) + box.get("h", 0) / 2)
+                points.append([round(cx), round(cy)])
 
     if not points:
-        # 用示例数据占位
+        # 用DefectEvent的bbox_trace
+        for ev in DefectEvent.objects.all():
+            for pt in ev.bbox_trace:
+                if isinstance(pt, (list, tuple)) and len(pt) >= 2:
+                    points.append([round(pt[0]), round(pt[1])])
+
+    if not points:
         points = [[100, 200], [150, 180], [200, 220], [300, 300], [400, 350]]
 
     return render(request, "defect/heatmap.html", {

@@ -22,12 +22,11 @@
             <td>{{ r.detect_time }}</td>
             <td>
                 <a href="{% url 'defect_detail' r.id %}">详情</a>
+                <a href="{% url 'defect_compare' r.id %}">对比</a>
                 <a href="{% url 'review_confirm' r.id %}" style="color:green">✓ 确认</a>
-                <a href="{% url 'review_reject' r.id %}" style="color:red">✗ 驳回</a>
+                <a href="{% url 'defect_detail' r.id %}#reject" style="color:red">✗ 驳回</a>
             </td>
         </tr>
-        {% empty %}
-        <tr><td colspan="7">队列为空，没有待复核记录</td></tr>
         {% endfor %}
     </table>
 </body>
