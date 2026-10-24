@@ -6,8 +6,7 @@
 </head>
 <body>
     <h2>缺陷检测台账</h2>
-    <a href="{% url 'defect_infer' %}">AI自动检测</a> |
-    <a href="{% url 'defect_add' %}">手动新增</a>
+    <a href="{% url 'defect_add' %}">新增缺陷记录</a>
     <table border="1" cellpadding="5">
         <tr>
             <th>ID</th>
@@ -16,7 +15,6 @@
             <th>设备编号</th>
             <th>置信度</th>
             <th>检测时间</th>
-            <th>模型版本</th>
             <th>操作</th>
         </tr>
         {% for r in records %}
@@ -27,7 +25,6 @@
             <td>{{ r.device_id }}</td>
             <td>{{ r.confidence }}</td>
             <td>{{ r.detect_time }}</td>
-            <td>{{ r.model_version|default:"-" }}</td>
             <td>
                 <a href="{% url 'defect_detail' r.id %}">详情</a>
                 <a href="{% url 'defect_edit' r.id %}">编辑</a>
@@ -35,7 +32,7 @@
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="8">暂无缺陷记录，请新增</td></tr>
+        <tr><td colspan="7">暂无缺陷记录，请新增</td></tr>
         {% endfor %}
     </table>
 </body>
