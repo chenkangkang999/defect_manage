@@ -16,6 +16,16 @@
     {% endif %}
     <p>备注：{{ record.remark }}</p>
     <p>检测时间：{{ record.detect_time }}</p>
+
+    {% if record.model_version %}
+    <hr>
+    <h3>数据血缘溯源</h3>
+    <p>模型版本：{{ record.model_version }}</p>
+    <p>推理运行ID：{{ record.inference_run_id }}</p>
+    <p>数据指纹：<code>{{ record.data_fingerprint }}</code></p>
+    <p>复核状态：{% if record.is_reviewed %}已复核{% else %}未复核{% endif %}</p>
+    {% endif %}
+
     <a href="{% url 'defect_edit' record.id %}">编辑</a>
     <a href="{% url 'defect_list' %}">返回列表</a>
 </body>

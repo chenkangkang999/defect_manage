@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>AI自动检测</title>
+</head>
+<body>
+    <h2>AI自动缺陷检测</h2>
+    <p>上传图片，YOLO模型自动识别缺陷类型、置信度，并自动创建台账记录。</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>检测人员：<input type="text" name="detect_person" value="系统"></p>
+        <p>设备编号：<input type="text" name="device_id" value="web-upload"></p>
+        <p>选择图片：<input type="file" name="image" accept="image/*" required></p>
+        <button type="submit">开始检测</button>
+    </form>
+
+    {% if result %}
+    <hr>
+    {% if result.error %}
+    <p style="color:red">{{ result.error }}</p>
+    {% else %}
+    <h3>检测结果</h3>
+    <p>缺陷类型：<strong>{{ result.class_name }}</strong></p>
+    <p>置信度：{{ result.confidence }}</p>
+    <p>已自动创建台账记录 #{{ result.record_id }}</p>
+    <p><a href="{% url 'defect_detail' result.record_id %}">查看详情</a></p>
+    {% endif %}
+    {% endif %}
+
+    <hr>
+    <a href="{% url 'defect_list' %}">返回列表</a>
+</body>
+</html>

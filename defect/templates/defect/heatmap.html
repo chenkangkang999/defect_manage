@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>缺陷空间热力图</title>
+    <script src="https://cdn.jsdelivr.net/npm/heatmap.js@2.0.5/build/heatmap.min.js"></script>
+    <style>
+        #heatmap { width: 640px; height: 480px; background: #eee; position: relative; }
+    </style>
+</head>
+<body>
+    <h2>缺陷空间热力图</h2>
+    <p>共 {{ point_count }} 个检测框中心点叠加。一眼看出缺陷集中在画面哪个区域。</p>
+    <a href="{% url 'dashboard' %}">返回看板</a>
+    <div id="heatmap"></div>
+    <script>
+    const points = {{ points|safe }};
+    const heatmapInstance = h337.create({ container: document.getElementById('heatmap') });
+    const data = points.map(p => ({ x: p[0], y: p[1], value: 1 }));
+    heatmapInstance.setData({ max: 5, data: data });
+    </script>
+</body>
+</html>
