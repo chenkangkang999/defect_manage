@@ -3,3 +3,7 @@ Django==6.1.2
 djangorestframework==3.18.3
 django-cors-headers==4.9.0
 pillow==13.0.0
+
+# YOLO推理
+ultralytics==8.4.183
+opencv-python==5.0.0.93
