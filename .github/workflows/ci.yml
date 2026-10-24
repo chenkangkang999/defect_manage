@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: Django 检查 / 迁移 / 测试 / 硬编码守卫
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Django 系统检查
+        # 未设置 DJANGO_SECRET_KEY 时会用一次性随机密钥并打印告警, 属预期
+        run: python manage.py check
+
+      - name: 迁移是否有遗漏
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: 运行测试
+        run: python manage.py test -v 2
+
+      - name: 硬编码守卫 (禁止绝对路径)
+        shell: bash
+        run: |
+          # 匹配盘符路径(如 D:\ 或 C:/)。前面的字符类排除 https:// 这类误报。
+          set +e
+          hits=$(grep -rInE '(^|[^A-Za-z0-9])[A-Za-z]:[\\/]' \
+                   --include='*.py' --include='*.html' --include='*.yaml' --include='*.json' \
+                   --exclude-dir=.git --exclude-dir=.venv --exclude-dir=media .)
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "::error::发现硬编码绝对路径, 请改用 settings.BASE_DIR 或环境变量:"
+            echo "$hits"
+            exit 1
+          fi
+          echo "✅ 未发现硬编码绝对路径"
